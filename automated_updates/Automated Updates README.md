@@ -1,5 +1,5 @@
 ## Approach Overview
-The approach relies on feeding images and prompts into the multi-modal OpenAI API (gpt-5-mini or gpt-5) for automated parsing. This end-to-end approach *by-far* outperforms standard OCR libraries and other fragmented, rules-reliant workflows. It is also way easier to implement and continue to develop, and will continue getting better and cheaper as these models improve.
+The approach relies on feeding images and prompts to a multimodal model through OpenRouter for automated parsing. This end-to-end approach *by-far* outperforms standard OCR libraries and other fragmented, rules-reliant workflows. It is also way easier to implement and continue to develop, and will continue getting better and cheaper as these models improve.
 
 It is set up so that most users will not have to run the automation pipeline. The `all_source_data` and `final_datasets` folders are small enough to commit to GitHub, so ideally one person will run the pipeline periodically, and everyone else can just easily access these artifacts for their own use (unless you are contributing to development of the automation)
 
@@ -27,9 +27,10 @@ To set up the full automation pipeline, follow these steps:
        ```
        CHROME_DRIVER_PATH='/path/to/chromedriver'
        ```
-   - **OpenAI API Key**: Get an api key from OpenAI, ensuring sufficient funds to use the API, and add it to `.env` as:  
+   - **OpenRouter API Key and Model**: [Create an OpenRouter API key](https://openrouter.ai/settings/keys), ensure the account has sufficient credits, and add the key to `.env`. The model defaults to `qwen/qwen3-vl-235b-a22b-instruct`; set `OPENROUTER_MODEL` only to override it:
      ```
-     OPENAI_API_KEY='your_openai_api_key'
+     OPENROUTER_API_KEY='your_openrouter_api_key'
+     OPENROUTER_MODEL='qwen/qwen3-vl-235b-a22b-instruct'
      ```
 
 **Note on pymupdf**  
@@ -45,7 +46,8 @@ To set up the full automation pipeline, follow these steps:
 ```
 CONGRESS_GOV_API_KEY='rv92...'
 CHROME_DRIVER_PATH='/path/to/chromedriver'
-OPENAI_API_KEY='sk-kiKX...'
+OPENROUTER_API_KEY='sk-or-v1-...'
+OPENROUTER_MODEL='qwen/qwen3-vl-235b-a22b-instruct'
 ```
 
 ## Using a Test Dataset
@@ -77,9 +79,9 @@ To quickly set up and ensure all code paths are functioning, a pre-defined test 
 *Note: This step can be skipped if you already have recent source data, which should be up to date and committed to the repo. For example, if you are working on the processing of the source files and and don't want to re-run the gather module.*
 
 **parse_asset_names_llm.py**  
-* Sends images to OpenAI's API with specific prompts, extracting asset names and saving them to `./all_processed_data`.
+* Sends images through OpenRouter with specific prompts, extracting asset names and saving them to `./all_processed_data`.
 * Use the `--new-only` flag to parse only new disclosures since last run.
-* To parallelize this step, use `parse_asset_names_llm_parallel.py`, which uses 8 workers by default. Requires OpenAI API Usage Tier 2 or higher.
+* To parallelize this step, use `parse_asset_names_llm_parallel.py`, which uses 8 workers by default. Ensure the selected OpenRouter model and provider can support the resulting request rate.
      
 **summarize_results.py**  
 * Summarizes files in `./all_processed_data` into `final_datasets/final_asset_data.csv` and `final_datasets/final_summary_data.csv`.
