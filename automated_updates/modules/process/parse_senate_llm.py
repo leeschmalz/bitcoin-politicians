@@ -4,6 +4,7 @@ from config import processed_data_dir
 import csv
 import os
 import glob
+import re
 
 def assets_from_senate_image_to_csv(input_image_path):
 	base64_image = encode_image(input_image_path)
