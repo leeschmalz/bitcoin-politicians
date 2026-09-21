@@ -12,7 +12,7 @@ To set up the full automation pipeline, follow these steps:
    - Run: `python -m venv your-env-name`
    - Activate the environment, then install dependencies:  
      ```
-     pip install -r requirements.txt
+     pip install -r automated_updates/requirements.txt
      ```
 
 2. **Set Environment Variables**  
@@ -62,12 +62,38 @@ To quickly set up and ensure all code paths are functioning, a pre-defined test 
    ```
    Alternatively, just delete the existing source files.
    
-2. **Run the Gather Script with the Test Flag**: Execute the `gather_source_data.py` script with the `--test-set` flag to load and process the test dataset:
+2. **Gather the Test Set**: Run the CLI with the `--test-set` flag to load and process the test dataset:
 
-   ```python gather_source_data.py --test-set```
+   ```
+   ./bitcoin-politicians gather --test-set
+   ```
 
 
-## Run the Pipeline in Three Parts
+## Command Line Interface
+
+Run the automation from the repository root with the `bitcoin-politicians` command:
+
+```
+./bitcoin-politicians --help
+```
+
+The entire update pipeline can be run with one command:
+
+```
+./bitcoin-politicians update --new-only --workers 8
+```
+
+The CLI stops if a stage fails and returns a nonzero exit code, making it suitable for automation and coding agents. Each stage can also be run independently:
+
+```
+./bitcoin-politicians gather
+./bitcoin-politicians extract --new-only --workers 8
+./bitcoin-politicians summarize
+```
+
+Use `./bitcoin-politicians gather --test-set` to gather the small test dataset. The original Python scripts remain available for compatibility.
+
+## Pipeline Stages
 
 **gather_source_data.py**  
 * Retrieves congress member data from the Congress API: https://api.congress.gov/v3/member/congress  
