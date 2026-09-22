@@ -1,4 +1,5 @@
 last_name,first_name,party,state,chamber,congress_status,owner,filing_year,link,triggered_terms,matched_asset_names
+Arenholz,Ashley,R,IA,house,current,True,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10076278.pdf,"btc, bitcoin, grayscale, gbtc, bito","CHARLES SCHWAB BROKERAGE ACCOUNT [2] ⇒ Grayscale Bitcoin Mini Trust ETF (BTC) [OT], Grayscale Bitcoin Trust (GBTC) [EF], CHARLES SCHWAB BROKERAGE ACCOUNT [2] ⇒ ProShares Bitcoin ETF (BITO) [EF]"
 Begich,Nicholas J.,R,AK,house,current,True,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10075994.pdf,bitcoin,"Bitcoin [CT], Bitcoin Cash [CT]"
 Bresnahan,Robert P.,R,PA,house,current,True,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10075331.pdf,"coinbase, (coin)","JP Morgan Brokerage Account #2 => Coinbase Global, Inc. - Class A Common Stock (COIN) [ST]"
 Britt,Katie Boyd,R,AL,senate,current,True,2026,https://efdsearch.senate.gov/search/view/annual/e94da42f-0f1b-416b-9af2-48034c5651b1/,"block, inc","SQ - Block, Inc. Class A Common Stock,"
@@ -6,6 +7,7 @@ Cisneros,Gilbert Ray,D,CA,house,current,True,2025,https://disclosures-clerk.hous
 Collins,Mike,R,GA,house,current,True,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10081384.pdf,"ski mask dog, crypto, ethereum, cryptocurrency","ski mask dog [CT], Ski Mask Dog [CT], Ethereum Crypto currency [CT], Ethereum [CT], Cryptocurrency Assets"
 Cruz,Ted,R,TX,senate,current,True,2026,https://efdsearch.senate.gov/search/view/annual/cf2a1a88-62f5-41ae-95ed-48a341687be7/,bitcoin,"Bitcoin Exchange/Platform: River Financial Inc, Bitcoin MinersDescription: Three Bitcoin Miners (Iraan, Texas), Bitcoin MinersDescription: Bitmain S21"
 Donalds,Byron,R,FL,house,current,True,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10075306.pdf,"crypto, btc, bitcoin","Alto IRA => Bitcoin (CRYPTO:BTC) [CT], Bitcoin (CRYPTO:BTC) [CT]"
+Fallon,Pat,R,TX,house,current,True,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10073345.pdf,"block, inc, (sq)","WF - Investment - 3 ⇒ Block, Inc. Class A Common Stock, (SQ) [ST]"
 Fetterman,John,D,PA,senate,current,True,2026,https://efdsearch.senate.gov/search/view/annual/8eed05ea-ec2d-4ef5-b458-d410fd76b40e/,coinbase,"COIN - Coinbase Global, Inc. - Class A Common StockFiler comment: Purchase less than $1,000."
 Gill,Brandon,R,TX,house,current,True,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10077427.pdf,btc,BTC [CT]
 Harrigan,Pat,R,NC,house,current,True,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10081474.pdf,ethereum,Ethereum [CT]
@@ -25,7 +27,7 @@ Smith,Adrian,R,NE,house,current,True,2025,https://disclosures-clerk.house.gov/pu
 Thanedar,Shri,D,MI,house,current,True,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10075203.pdf,"bitcoin, ibit, (etha), ethereum, mstr","iShares Bitcoin Trust ETF - iShares Bitcoin Trust ETF (IBIT) [ET], iShares Ethereum Trust ETF (ETHA) [ST], iShares Bitcoin Trust ETF (IBIT) [ST], Strategy Inc - Class A Common Stock (MSTR) [ST]"
 Tlaib,Rashida,D,MI,house,current,True,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10074621.pdf,"bitcoin, ibit, grayscale, ethereum","Schwab Rollover Traditional IRA ⇒ iShares Bitcoin Trust ETF (IBIT) [EF], Schwab Roth Contributory IRA ⇒ Grayscale Ethereum Staking Mini ETF Shares (ETH) [ST], Schwab Roth Contributory IRA ⇒ iShares Bitcoin Trust ETF (IBIT) [ST], Schwab Roth Contributory IRA ⇒ iShares Bitcoin Trust ETF (IBIT) [EF]"
 Tran,Derek,D,CA,house,current,True,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10074943.pdf,"cryptocurrency, coinbase, binance","Coinbase cryptocurrency wallet, Binance cryptocurrency wallet"
-Van Drew,Jefferson,R,NJ,house,current,True,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/9116169.pdf,grayscale (handwritten disclosure exception),Grayscale Investment Trust
+Van Drew,Jefferson,R,NJ,house,current,True,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/9116169.pdf,grayscale,Grayscale Investment Trust
 Vance,J. D.,R,OH,senate,past,True,2024,https://efdsearch.senate.gov/search/view/annual/2f2f5bbc-50c5-4b00-acd9-85870f9e349c/,coinbase,BTCExchange/Platform: Coinbase
 Waltz,Michael,R,FL,house,past,True,2023,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2023/10057260.pdf,bitcoin,"Bitcoin [OT], Cresset Investment Account => Wise Origin Bitcoin Index Fund I, LP [HE]"
 Adams,Alma S.,D,NC,house,current,False,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10077643.pdf,,
@@ -38,7 +40,6 @@ Alsobrooks,Angela D.,D,MD,senate,current,False,2026,https://efdsearch.senate.gov
 Amo,Gabe,D,RI,house,current,False,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10076093.pdf,,
 Amodei,Mark E.,R,NV,house,current,False,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10075736.pdf,,
 Ansari,Yassamin,D,AZ,house,current,False,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10078188.pdf,,
-Arenholz,Ashley,R,IA,house,current,False,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10076278.pdf,,
 Armstrong,Kelly,R,ND,house,past,False,2023,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2023/10057429.pdf,,
 Arrington,Jodey C.,R,TX,house,current,False,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10078577.pdf,,
 Auchincloss,Jake,D,MA,house,current,False,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10073339.pdf,,
@@ -191,7 +192,6 @@ Estes,Ron,R,KS,house,current,False,2025,https://disclosures-clerk.house.gov/publ
 Evans,Dwight,D,PA,house,current,False,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10077377.pdf,,
 Evans,Gabe,R,CO,house,current,False,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10078293.pdf,,
 Ezell,Mike,R,MS,house,current,False,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10075579.pdf,,
-Fallon,Pat,R,TX,house,current,False,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10073345.pdf,,
 Fedorchak,Julie,R,ND,house,current,False,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10077206.pdf,,
 Feenstra,Randy,R,IA,house,current,False,2025,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10076528.pdf,,
 Ferguson,A. Drew,R,GA,house,past,False,2023,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2023/10060230.pdf,,

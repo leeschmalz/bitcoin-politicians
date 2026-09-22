@@ -9,7 +9,7 @@
 | Amo, Gabe | D | RI | House | NO | 2025 | - |
 | Amodei, Mark E. | R | NV | House | NO | 2025 | - |
 | Ansari, Yassamin | D | AZ | House | NO | 2025 | - |
-| Arenholz, Ashley | R | IA | House | NO | 2025 | - |
+| Arenholz, Ashley | R | IA | House | YES | 2025 | <a href="https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10076278.pdf" class="holdings-link" target="_blank" rel="noopener noreferrer">View Holdings<span class="holdings-tooltip" role="tooltip">CHARLES SCHWAB BROKERAGE ACCOUNT [2] ⇒ Grayscale Bitcoin Mini Trust ETF (BTC) [OT], Grayscale Bitcoin Trust (GBTC) [EF], CHARLES SCHWAB BROKERAGE ACCOUNT [2] ⇒ ProShares Bitcoin ETF (BITO) [EF]</span></a> |
 | Arrington, Jodey C. | R | TX | House | NO | 2025 | - |
 | Auchincloss, Jake | D | MA | House | NO | 2025 | - |
 | Babin, Brian | R | TX | House | NO | 2025 | - |
@@ -143,7 +143,7 @@
 | Evans, Dwight | D | PA | House | NO | 2025 | - |
 | Evans, Gabe | R | CO | House | NO | 2025 | - |
 | Ezell, Mike | R | MS | House | NO | 2025 | - |
-| Fallon, Pat | R | TX | House | NO | 2025 | - |
+| Fallon, Pat | R | TX | House | YES | 2025 | <a href="https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10073345.pdf" class="holdings-link" target="_blank" rel="noopener noreferrer">View Holdings<span class="holdings-tooltip" role="tooltip">WF - Investment - 3 ⇒ Block, Inc. Class A Common Stock, (SQ) [ST]</span></a> |
 | Fedorchak, Julie | R | ND | House | NO | 2025 | - |
 | Feenstra, Randy | R | IA | House | NO | 2025 | - |
 | Fetterman, John | D | PA | Senate | YES | 2026 | <a href="https://efdsearch.senate.gov/search/view/annual/8eed05ea-ec2d-4ef5-b458-d410fd76b40e/" class="holdings-link" target="_blank" rel="noopener noreferrer">View Holdings<span class="holdings-tooltip" role="tooltip">COIN - Coinbase Global, Inc. - Class A Common StockFiler comment: Purchase less than $1,000.</span></a> |
