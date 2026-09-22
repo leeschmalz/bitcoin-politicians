@@ -204,23 +204,23 @@ def get_current_member_keyset():
         return set()
 
 def make_markdown_for_readMe(summarised_df):
+    summarised_df = summarised_df[summarised_df["congress_status"] == "current"].copy()
     summarised_df["Name"] = summarised_df["last_name"] + ", " + summarised_df["first_name"]
     summarised_df["Party"] = summarised_df["party"]
     summarised_df["House"] = summarised_df["chamber"].str.title()
-    summarised_df["Congress"] = summarised_df["congress_status"]
     summarised_df["Owner"] = summarised_df["owner"].apply(lambda x: "YES" if x else "NO")
     summarised_df["Disclosure"] = summarised_df.apply(
         lambda row: f"[{row['filing_year']}]({row['link']})" if row["link"] else "-", axis=1
     )
     summarised_df["Notes"] = summarised_df["matched_asset_names"].replace("", "-", regex=False)
 
-    output_df = summarised_df[["Name", "Party", "state", "House", "Congress", "Owner", "Disclosure", "Notes"]]
+    output_df = summarised_df[["Name", "Party", "state", "House", "Owner", "Disclosure", "Notes"]]
     output_df = output_df.rename(columns={"state": "State"})
 
-    markdown_content = "| Name | Party | State | House | Congress | Owner | Disclosure | Notes |\n"
-    markdown_content += "|------|:-----:|:-----:|-------|:--------:|:------:|:----------:|-------|\n"
+    markdown_content = "| Name | Party | State | House | Owner | Disclosure | Notes |\n"
+    markdown_content += "|------|:-----:|:-----:|-------|:------:|:----------:|-------|\n"
     for _, row in output_df.iterrows():
-        markdown_content += f"| {row['Name']} | {row['Party']} | {row['State']} | {row['House']} | {row['Congress']} | {row['Owner']} | {row['Disclosure']} | {row['Notes']} |\n"
+        markdown_content += f"| {row['Name']} | {row['Party']} | {row['State']} | {row['House']} | {row['Owner']} | {row['Disclosure']} | {row['Notes']} |\n"
 
     with open("./final_datasets/final_summary_data.md", "w") as f:
         f.write(markdown_content)
