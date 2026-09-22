@@ -504,7 +504,7 @@ NOTE: If you open a link to a Senator's disclosure, you need to paste the URL in
 | Turner, Michael R. | R | OH | House | NO | 2025 | - |
 | Underwood, Lauren | D | IL | House | NO | 2025 | - |
 | Valadao, David G. | R | CA | House | NO | 2025 | - |
-| Van Drew, Jefferson | R | NJ | House | NO | 2025 | - |
+| Van Drew, Jefferson | R | NJ | House | YES | 2025 | <a href="https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/9116169.pdf" class="holdings-link" target="_blank" rel="noopener noreferrer">View Holdings<span class="holdings-tooltip" role="tooltip">Grayscale Investment Trust</span></a> |
 | Van Duyne, Beth | R | TX | House | NO | 2025 | - |
 | Van Epps, Matt | R | TN | House | NO | 2026 | - |
 | Van Hollen, Chris | D | MD | Senate | NO | 2026 | - |
