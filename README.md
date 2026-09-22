@@ -303,7 +303,7 @@ NOTE: If you open a link to a Senator's disclosure, you need to paste the URL in
 | Loudermilk, Barry | R | GA | House | NO | 2025 | - |
 | Lucas, Frank D. | R | OK | House | NO | 2025 | - |
 | Lujan, Ben Ray | D | NM | Senate | NO | 2025 | - |
-| Lummis, Cynthia M. | R | WY | Senate | NO | 2026 | - |
+| Lummis, Cynthia M. | R | WY | Senate | YES | 2026 | <a href="https://efdsearch.senate.gov/search/view/annual/1e9b68e7-a359-4b46-9621-d07d92c25689/" class="holdings-link" target="_blank" rel="noopener noreferrer">View Holdings<span class="holdings-tooltip" role="tooltip">Qualified Blind Trust (previously disclosed Bitcoin)</span></a> |
 | Luttrell, Morgan | R | TX | House | YES | 2025 | <a href="https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2025/10081366.pdf" class="holdings-link" target="_blank" rel="noopener noreferrer">View Holdings<span class="holdings-tooltip" role="tooltip">Fidelity Wise Origin Bitcoin Fund (FBTC) [EF]</span></a> |
 | Lynch, Stephen F. | D | MA | House | NO | 2025 | - |
 | Mace, Nancy | R | SC | House | NO | 2025 | - |

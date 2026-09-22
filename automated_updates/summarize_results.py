@@ -51,6 +51,7 @@ def combine_processed_data():
     summarised_df = identify_bitcoin_crypto_holdings(combined_df)
     summarised_df = include_source_data_links_summary_data(summarised_df)
     summarised_df = filter_to_most_recent_year_per_person(summarised_df)
+    summarised_df = apply_owner_exceptions(summarised_df)
 
     # annotate congress status (current/past) using current member list
     current_member_keys = get_current_member_keyset()
@@ -68,6 +69,28 @@ def combine_processed_data():
     print(f"\033[32mSaved Bitcoin/Crypto Summary: 'final_datasets/final_summary_data.csv'\033[0m")
     print(f"\033[32mSaved Markdown for ReadMe: 'final_datasets/final_summary_data.md'\033[0m\n")
     return combined_df
+
+def apply_owner_exceptions(summarised_df):
+    exceptions = {
+        ("Lummis", "Cynthia M.", "WY", "senate"): {
+            "triggered_terms": "bitcoin (qualified blind trust exception)",
+            "matched_asset_names": "Qualified Blind Trust (previously disclosed Bitcoin)",
+        },
+    }
+    for key, values in exceptions.items():
+        last_name, first_name, state, chamber = key
+        mask = (
+            (summarised_df["last_name"] == last_name)
+            & (summarised_df["first_name"] == first_name)
+            & (summarised_df["state"] == state)
+            & (summarised_df["chamber"] == chamber)
+        )
+        if not mask.any():
+            raise RuntimeError(f"Owner exception did not match a summary row: {key}")
+        summarised_df.loc[mask, "owner"] = True
+        for column, value in values.items():
+            summarised_df.loc[mask, column] = value
+    return summarised_df
 
 def merge_with_historical_asset_data(refreshed_df):
     historical_path = './final_datasets/final_asset_data.csv'
