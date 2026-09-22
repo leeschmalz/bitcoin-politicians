@@ -2,6 +2,7 @@
 # Identifies bitcoin/crypto assets and combines files in all_processed_data into final dataframes
 
 import os
+import re
 import pandas as pd
 from config import processed_data_dir, source_data_dir
 from config import bitcoin_crypto_terms, bitcoin_crypto_terms_false_positives
@@ -39,7 +40,11 @@ def combine_processed_data():
 
             dataframes.append(df)
 
-    combined_df = pd.concat(dataframes, ignore_index=True)
+    refreshed_df = pd.concat(dataframes, ignore_index=True)
+    combined_df = merge_with_historical_asset_data(refreshed_df)
+    combined_df['asset_name'] = combined_df['asset_name'].apply(
+        lambda value: ' '.join(value.split()) if isinstance(value, str) else value
+    )
     combined_df.to_csv('./final_datasets/final_asset_data.csv', index=False)
 
     summarised_df = identify_bitcoin_crypto_holdings(combined_df)
@@ -63,20 +68,53 @@ def combine_processed_data():
     print(f"\033[32mSaved Markdown for ReadMe: 'final_datasets/final_summary_data.md'\033[0m\n")
     return combined_df
 
+def merge_with_historical_asset_data(refreshed_df):
+    historical_path = './final_datasets/final_asset_data.csv'
+    if not os.path.isfile(historical_path):
+        return refreshed_df
+
+    historical_df = pd.read_csv(historical_path)
+    key_columns = ['last_name', 'first_name', 'state', 'year', 'chamber']
+    for dataframe in (historical_df, refreshed_df):
+        dataframe['year'] = pd.to_numeric(dataframe['year'], errors='coerce').astype('Int64')
+
+    refreshed_keys = set(
+        refreshed_df[key_columns].itertuples(index=False, name=None)
+    )
+    historical_keys = historical_df[key_columns].apply(tuple, axis=1)
+    preserved_history = historical_df[~historical_keys.isin(refreshed_keys)]
+    return pd.concat([preserved_history, refreshed_df], ignore_index=True)
+
 def identify_bitcoin_crypto_holdings(combined_df):
-    # create columns to capture matched terms and asset names, handling non-string cases
-    combined_df['triggered_terms'] = combined_df['asset_name'].apply(
-        lambda x: ', '.join([term for term in bitcoin_crypto_terms if isinstance(x, str) and term.lower() in x.lower()])
-    )
+    term_patterns = [
+        (
+            term.replace(r'\(', '(').replace(r'\)', ')'),
+            re.compile(rf"(?<![A-Za-z0-9])(?:{term})(?![A-Za-z0-9])", re.IGNORECASE),
+        )
+        for term in bitcoin_crypto_terms
+    ]
+
+    def _matching_terms(asset_name):
+        if not isinstance(asset_name, str):
+            return []
+        return [term for term, pattern in term_patterns if pattern.search(asset_name)]
+
+    matches = combined_df['asset_name'].apply(_matching_terms)
+    combined_df['triggered_terms'] = matches.apply(lambda terms: ', '.join(terms))
     combined_df['matched_asset_names'] = combined_df['asset_name'].apply(
-        lambda x: x if isinstance(x, str) and any(term.lower() in x.lower() for term in bitcoin_crypto_terms) else ''
+        lambda x: x if isinstance(x, str) else ''
     )
+    combined_df.loc[matches.apply(lambda terms: not terms), 'matched_asset_names'] = ''
 
     combined_df['owner'] = combined_df['triggered_terms'] != ''
 
     # exclude rows containing any false positives
     combined_df.loc[
-        combined_df['asset_name'].str.contains('|'.join(bitcoin_crypto_terms_false_positives), case=False, na=False),
+        combined_df['asset_name'].str.contains(
+            '|'.join(re.escape(term) for term in bitcoin_crypto_terms_false_positives),
+            case=False,
+            na=False,
+        ),
         ['owner', 'triggered_terms', 'matched_asset_names']
     ] = [False, '', '']
 
@@ -104,11 +142,12 @@ def identify_bitcoin_crypto_holdings(combined_df):
                 ordered_assets.append(asset)
         return ', '.join(ordered_assets)
 
-    holdings_summary = combined_df.groupby(['last_name', 'first_name', 'state', 'chamber']).agg(
+    holdings_summary = combined_df.groupby(['last_name', 'first_name', 'state', 'year', 'chamber']).agg(
         owner=('owner', 'max'),
         triggered_terms=('triggered_terms', _dedupe_terms),
         matched_asset_names=('matched_asset_names', _dedupe_asset_names)
     ).reset_index()
+    holdings_summary = holdings_summary.rename(columns={'year': 'filing_year'})
 
     holdings_summary = holdings_summary.sort_values(by=['owner', 'last_name', 'first_name'], ascending=[False, True, True])
     
@@ -121,14 +160,20 @@ def include_source_data_links_summary_data(data):
         return data
 
     source_data_links = pd.read_csv(csv_file_path)
+    source_data_links['filing_year'] = pd.to_numeric(
+        source_data_links['filing_year'], errors='coerce'
+    ).astype('Int64')
+    source_data_links = source_data_links.drop_duplicates(
+        subset=['last_name', 'first_name', 'state', 'filing_year'], keep='last'
+    )
     merged_data = pd.merge(
         data,
         source_data_links,
         how="left",
-        on=["last_name", "first_name", "state"]
+        on=["last_name", "first_name", "state", "filing_year"]
     )
 
-    return merged_data
+    return merged_data[merged_data['link'].notna()].copy()
 
 def filter_to_most_recent_year_per_person(data):
     if data is None or data.empty or 'filing_year' not in data.columns:
@@ -138,6 +183,7 @@ def filter_to_most_recent_year_per_person(data):
     df = df.sort_values(['last_name', 'first_name', 'state', 'filing_year_num'], ascending=[True, True, True, False])
     df = df.drop_duplicates(subset=['last_name', 'first_name', 'state'], keep='first')
     df = df.drop(columns=['filing_year_num'])
+    df['filing_year'] = pd.to_numeric(df['filing_year'], errors='coerce').astype('Int64')
     return df
 
 def get_current_member_keyset():
@@ -178,6 +224,28 @@ def make_markdown_for_readMe(summarised_df):
 
     with open("./final_datasets/final_summary_data.md", "w") as f:
         f.write(markdown_content)
+
+    update_root_readme(markdown_content)
+
+def update_root_readme(markdown_content):
+    readme_path = "../README.md"
+    section_heading = "# Bitcoin Holdings of US Congress Members"
+    with open(readme_path) as f:
+        readme = f.read()
+    if section_heading not in readme:
+        raise RuntimeError(f"Could not find generated-data section in {readme_path}")
+
+    introduction = readme.split(section_heading, 1)[0].rstrip()
+    disclosure_note = (
+        "NOTE: If you open a link to a Senator's disclosure, you need to paste "
+        "the URL into a browser tab that has already accepted their site's Terms of Service."
+    )
+    updated_readme = (
+        f"{introduction}\n\n{section_heading}\n\n{disclosure_note}\n\n"
+        f"{markdown_content}"
+    )
+    with open(readme_path, "w") as f:
+        f.write(updated_readme)
 
 if __name__ == '__main__':
     combined_df = combine_processed_data()

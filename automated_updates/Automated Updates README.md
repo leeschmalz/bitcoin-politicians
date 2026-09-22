@@ -1,114 +1,67 @@
-## Approach Overview
-The approach relies on feeding images and prompts to a multimodal model through OpenRouter for automated parsing. This end-to-end approach *by-far* outperforms standard OCR libraries and other fragmented, rules-reliant workflows. It is also way easier to implement and continue to develop, and will continue getting better and cheaper as these models improve.
+# Automated updates
 
-It is set up so that most users will not have to run the automation pipeline. The `all_source_data` and `final_datasets` folders are small enough to commit to GitHub, so ideally one person will run the pipeline periodically, and everyone else can just easily access these artifacts for their own use (unless you are contributing to development of the automation)
+The pipeline downloads congressional financial disclosures, extracts asset names from document images with a multimodal model through OpenRouter, identifies crypto-related holdings, and regenerates the datasets and root `README.md`.
+
+Run commands from the repository root. The CLI returns a nonzero exit code when a stage fails, so these instructions can be followed by a human or a coding agent such as Claude Code or Codex.
 
 ## Setup
 
-To set up the full automation pipeline, follow these steps:
+Use Python 3.11 or newer in a virtual environment:
 
-1. **Create a Python Virtual Environment**  
-   - Use Python version 3.11.6 or similar.
-   - Run: `python -m venv your-env-name`
-   - Activate the environment, then install dependencies:  
-     ```
-     pip install -r automated_updates/requirements.txt
-     ```
-
-2. **Set Environment Variables**  
-   - Create a `.env` file in `automated_updates/.env`
-   - **Congress API Key**: Get an API key from Congress.gov and add it to `.env` as follows:  
-     ```
-     CONGRESS_GOV_API_KEY='your_api_key'
-     ```
-   - **ChromeDriver**:  
-     - Download ChromeDriver matching your Chrome version and OS from [Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing/).
-     - Add the path to `.env` like this:  
-       ```
-       CHROME_DRIVER_PATH='/path/to/chromedriver'
-       ```
-   - **OpenRouter API Key and Model**: [Create an OpenRouter API key](https://openrouter.ai/settings/keys), ensure the account has sufficient credits, and add the key to `.env`. The model defaults to `qwen/qwen3-vl-235b-a22b-instruct`; set `OPENROUTER_MODEL` only to override it:
-     ```
-     OPENROUTER_API_KEY='your_openrouter_api_key'
-     OPENROUTER_MODEL='qwen/qwen3-vl-235b-a22b-instruct'
-     ```
-
-**Note on pymupdf**  
-   If you encounter the error: `ModuleNotFoundError: No module named 'frontend'`, fix it by reinstalling the pymupdf package:
-   ```
-   pip uninstall pymupdf
-   pip install pymupdf
-   ```
-
-   This seems to be an issue with the package.
-
-#### Example .env File
+```sh
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r automated_updates/requirements.txt
 ```
-CONGRESS_GOV_API_KEY='rv92...'
+
+Create `automated_updates/.env` with:
+
+```dotenv
+CONGRESS_GOV_API_KEY='...'
 CHROME_DRIVER_PATH='/path/to/chromedriver'
-OPENROUTER_API_KEY='sk-or-v1-...'
+OPENROUTER_API_KEY='...'
 OPENROUTER_MODEL='qwen/qwen3-vl-235b-a22b-instruct'
 ```
 
-## Using a Test Dataset
+Get a [Congress.gov API key](https://api.congress.gov/sign-up/), an [OpenRouter API key](https://openrouter.ai/settings/keys), and a ChromeDriver build matching the installed Chrome version from [Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing/). `OPENROUTER_MODEL` is optional; the value above is the default.
 
-To quickly set up and ensure all code paths are functioning, a pre-defined test dataset is available. This dataset includes pre-selected congress members to hit all relevant code paths.
+Keep `.env` and all credentials untracked. An agent should ask the user to populate the file and can run the CLI without reading or printing it.
 
-1. **Modify Folder Paths in `config.py`**: Update `config.py` with new test dataset directories to ignore the existing files. Example modifications:
-   ```
-   source_data_dir = './all_source_data_test/'  
-   intermediate_files_dir = './intermediate_files_test/'  
-   processed_data_dir = './all_processed_data_test/'  
-   ```
-   Alternatively, just delete the existing source files.
-   
-2. **Gather the Test Set**: Run the CLI with the `--test-set` flag to load and process the test dataset:
+## CLI
 
-   ```
-   ./bitcoin-politicians gather --test-set
-   ```
+For a routine update, process only newly gathered disclosures:
 
-
-## Command Line Interface
-
-Run the automation from the repository root with the `bitcoin-politicians` command:
-
-```
-./bitcoin-politicians --help
-```
-
-The entire update pipeline can be run with one command:
-
-```
+```sh
 ./bitcoin-politicians update --new-only --workers 8
 ```
 
-The CLI stops if a stage fails and returns a nonzero exit code, making it suitable for automation and coding agents. Each stage can also be run independently:
+Omit `--new-only` to rebuild extraction output for every disclosure:
 
+```sh
+./bitcoin-politicians update --workers 8
 ```
+
+Stages can also be run independently:
+
+```sh
 ./bitcoin-politicians gather
 ./bitcoin-politicians extract --new-only --workers 8
 ./bitcoin-politicians summarize
 ```
 
-Use `./bitcoin-politicians gather --test-set` to gather the small test dataset. The original Python scripts remain available for compatibility.
+- `gather` downloads House and Senate disclosures, refreshes Congress membership data, and prepares document images. Use `gather --test-set` only for a small pipeline check.
+- `extract` sends prepared images to OpenRouter. `--workers N` controls concurrency, and completed outputs are skipped when a run is resumed.
+- `summarize` rebuilds the final CSV and Markdown datasets and updates the table in the root `README.md` without gathering or extraction.
+- `update` runs all three stages in order and stops at the first failure.
 
-## Pipeline Stages
+If a run is interrupted, rerun the failed stage. Use `./bitcoin-politicians COMMAND --help` for command-specific options.
 
-**gather_source_data.py**  
-* Retrieves congress member data from the Congress API: https://api.congress.gov/v3/member/congress  
-* Scrapes data from the House and Senate financial disclosure sites:
-    - House Financial Disclosures: https://disclosures-clerk.house.gov/
-    - Senate Financial Disclosures: https://efdsearch.senate.gov/
-* Organizes data for processing and converts PDF/GIF files to JPEGs.
+## Agent workflow
 
-*Note: This step can be skipped if you already have recent source data, which should be up to date and committed to the repo. For example, if you are working on the processing of the source files and and don't want to re-run the gather module.*
+1. Create a branch from `upstream/master` and complete the setup above.
+2. Run the routine update command. Monitor long extraction runs and resume the failed stage if needed.
+3. Review `git diff`, especially holder matches, disclosure links, filing years, Congress status, generated datasets, and the root `README.md`.
+4. Confirm secrets, caches, virtual environments, and ignored intermediate files are not included.
+5. Commit the reviewed refresh and prepare the pull request.
 
-**parse_asset_names_llm.py**  
-* Sends images through OpenRouter with specific prompts, extracting asset names and saving them to `./all_processed_data`.
-* Use the `--new-only` flag to parse only new disclosures since last run.
-* To parallelize this step, use `parse_asset_names_llm_parallel.py`, which uses 8 workers by default. Ensure the selected OpenRouter model and provider can support the resulting request rate.
-     
-**summarize_results.py**  
-* Summarizes files in `./all_processed_data` into `final_datasets/final_asset_data.csv` and `final_datasets/final_summary_data.csv`.
-* Implements bitcoin/crypto term classification based on a pre-defined list in `config.py`
+The committed source and final-data directories let most users inspect the results without running the pipeline themselves. The pipeline reads disclosures from the official [House](https://disclosures-clerk.house.gov/) and [Senate](https://efdsearch.senate.gov/) sites. Crypto classification terms and exclusions are maintained in `config.py`.
