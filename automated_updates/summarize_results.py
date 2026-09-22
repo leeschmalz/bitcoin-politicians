@@ -3,6 +3,7 @@
 
 import os
 import re
+from html import escape
 import pandas as pd
 from config import processed_data_dir, source_data_dir
 from config import bitcoin_crypto_terms, bitcoin_crypto_terms_false_positives
@@ -209,18 +210,27 @@ def make_markdown_for_readMe(summarised_df):
     summarised_df["Party"] = summarised_df["party"]
     summarised_df["House"] = summarised_df["chamber"].str.title()
     summarised_df["Owner"] = summarised_df["owner"].apply(lambda x: "YES" if x else "NO")
-    summarised_df["Disclosure"] = summarised_df.apply(
-        lambda row: f"[{row['filing_year']}]({row['link']})" if row["link"] else "-", axis=1
+    summarised_df["Disclosed Year"] = summarised_df["filing_year"]
+    summarised_df["Holdings"] = summarised_df.apply(
+        lambda row: (
+            f'<a href="{escape(str(row["link"]), quote=True)}" class="holdings-link" '
+            f'target="_blank" rel="noopener noreferrer">View Holdings'
+            f'<span class="holdings-tooltip" role="tooltip">'
+            f'{escape(str(row["matched_asset_names"]))}</span></a>'
+            if row["link"] and pd.notna(row["matched_asset_names"])
+            and str(row["matched_asset_names"]).strip()
+            else "-"
+        ),
+        axis=1,
     )
-    summarised_df["Notes"] = summarised_df["matched_asset_names"].replace("", "-", regex=False)
 
-    output_df = summarised_df[["Name", "Party", "state", "House", "Owner", "Disclosure", "Notes"]]
+    output_df = summarised_df[["Name", "Party", "state", "House", "Owner", "Disclosed Year", "Holdings"]]
     output_df = output_df.rename(columns={"state": "State"})
 
-    markdown_content = "| Name | Party | State | House | Owner | Disclosure | Notes |\n"
+    markdown_content = "| Name | Party | State | House | Owner | Disclosed Year | Holdings |\n"
     markdown_content += "|------|:-----:|:-----:|-------|:------:|:----------:|-------|\n"
     for _, row in output_df.iterrows():
-        markdown_content += f"| {row['Name']} | {row['Party']} | {row['State']} | {row['House']} | {row['Owner']} | {row['Disclosure']} | {row['Notes']} |\n"
+        markdown_content += f"| {row['Name']} | {row['Party']} | {row['State']} | {row['House']} | {row['Owner']} | {row['Disclosed Year']} | {row['Holdings']} |\n"
 
     with open("./final_datasets/final_summary_data.md", "w") as f:
         f.write(markdown_content)
@@ -229,20 +239,28 @@ def make_markdown_for_readMe(summarised_df):
 
 def update_root_readme(markdown_content):
     readme_path = "../README.md"
+    start_marker = "<!-- BEGIN GENERATED TABLE -->"
+    end_marker = "<!-- END GENERATED TABLE -->"
     section_heading = "# Bitcoin Holdings of US Congress Members"
     with open(readme_path) as f:
         readme = f.read()
-    if section_heading not in readme:
-        raise RuntimeError(f"Could not find generated-data section in {readme_path}")
+    if start_marker not in readme or end_marker not in readme:
+        raise RuntimeError(f"Could not find generated-table markers in {readme_path}")
 
-    introduction = readme.split(section_heading, 1)[0].rstrip()
+    introduction = readme.split(start_marker, 1)[0].rstrip()
+    trailing_content = readme.split(end_marker, 1)[1].lstrip()
+    overview = (
+        "Based upon public financial disclosures, we can know which politicians in Congress "
+        "actually have skin in the crypto industry."
+    )
     disclosure_note = (
         "NOTE: If you open a link to a Senator's disclosure, you need to paste "
         "the URL into a browser tab that has already accepted their site's Terms of Service."
     )
+    prefix = f"{introduction}\n\n" if introduction else ""
     updated_readme = (
-        f"{introduction}\n\n{section_heading}\n\n{disclosure_note}\n\n"
-        f"{markdown_content}"
+        f"{prefix}{start_marker}\n\n{section_heading}\n\n{overview}\n\n{disclosure_note}\n\n"
+        f"{markdown_content}\n{end_marker}\n\n{trailing_content}"
     )
     with open(readme_path, "w") as f:
         f.write(updated_readme)
